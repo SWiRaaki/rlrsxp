@@ -4,9 +4,13 @@
 #include "raylib.h"
 #include "resource.h"
 
+#define RLRSXP_MAJOR 0
+#define RLRSXP_MINOR 2
+
 #define ARG_RSX_PATH argv[1]
 #define ARG_ASSET_PATH argv[2]
 
+/*
 i32 const pref_txtr = ~TEXTURE;
 i32 const pref_tmap = ~TILEMAP;
 i32 const pref_anim = ~ANIMATED_TEXTURE;
@@ -113,6 +117,30 @@ void processTileMap( GmRsxPath p_rsx_path, char const * p_out_path ) {
 	}
 	fclose( cpr );
 }
+*/
+
+int convertFromRMI( char const * rmi ) {
+	printf( "Converting file %s..\n", rmi );
+	FILE * rmi_file = fopen( rmi, "r" );
+	if ( !rmi_file )
+		return -2;
+
+	char dat[100] = {0};
+	fread( dat, 1, 99, rmi_file );
+
+	printf( "%s\n", dat );
+
+	char param[100], value[100];
+	int res = fscanf( rmi_file, "%99s=%99s\n", param, value );
+	while( res == 2 ) {
+		printf( "found param %s with value %s\n", param, value );
+		res = fscanf( rmi_file, "%s=%s\n", param, value );
+	};
+
+	fclose( rmi_file );
+
+	return 0;
+}
 
 int main( int argc, char * argv[] ) {
 	SetTraceLogLevel( LOG_NONE );
@@ -122,10 +150,22 @@ int main( int argc, char * argv[] ) {
 		printf( "rsxpipeline <rsx_path> <asset_path>\n" );
 		printf( "<rsx_path>: Input path of the raw resources\n" );
 		printf( "<asset_path>: Output path for the assets (\".rsx\"-files)\n" );
+		printf( "rlrsxp will search for any .rmi files if <rsx_path> does not contain a specified file.\n" );
 		return -1;
 	}
-	printf( "Resource Pipeline v0.1\n" );
-	printf( "Searching for unmanaged resources in %s..\n", argv[1] );
+	printf( "Resource Pipeline v%d.%d\n", RLRSXP_MAJOR, RLRSXP_MINOR );
+	char const * ext = GetFileExtension( ARG_RSX_PATH );
+	if ( !ext ) {
+		//convertFolder();
+	} else if ( strcmp( ext, ".rmi" ) == 0 ) {
+		return convertFromRMI( ARG_RSX_PATH );
+	} else {
+		printf( "%s is neither a path that may contain .rmi files, nor is it a .rmi file!\n", ARG_RSX_PATH );
+		return -1;
+	}
+
+	/*
+	printf( "Searching for unmanaged resources in %s..\n", ARG_RSX_PATH );
 
 	//FilePathList files = LoadDirectoryFilesEx( argv[1], "png", true );
 	FilePathList files = LoadDirectoryFiles( argv[1] );
@@ -145,4 +185,5 @@ int main( int argc, char * argv[] ) {
 	printf( "Finished processing resources!\n" );
 
 	UnloadDirectoryFiles( files );
+	*/
 }

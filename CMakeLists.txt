@@ -42,7 +42,9 @@ include_directories(
 	inc
 )
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+message(STATUS ${CMAKE_CXX_COMPILER_ID} )
+
+if (CMAKE_C_COMPILER_ID MATCHES "Clang")
 	# using Clang
 	target_compile_options(
 		rlrsxp PRIVATE
@@ -59,7 +61,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 		OS_LIBS
 		m
 	)
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 	# using GCC
 	target_compile_options(
 		rlrsxp PRIVATE
@@ -76,7 +78,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 		OS_LIBS
 		m
 	)
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+elseif (CMAKE_C_COMPILER_ID STREQUAL "Intel")
 	# using Intel C++
 	target_compile_options(
 		rlrsxp PRIVATE
@@ -93,7 +95,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 		OS_LIBS
 		m
 	)
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+elseif (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 	# using Visual Studio C++
 	target_compile_options(
 		rlrsxp PRIVATE

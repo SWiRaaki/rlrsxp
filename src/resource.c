@@ -3,13 +3,14 @@
 #include "raylib.h"
 #include "string.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 GmResource * _rsx;
-i32 _rsx_cnt;
+int32_t _rsx_cnt;
 
 void gm_initResources( void ) {
 	// Load all globally accessable resources here
-	_rsx = NULL;
+	_rsx	 = NULL;
 	_rsx_cnt = 0;
 }
 
@@ -35,16 +36,16 @@ GmRsxPath gm_createRsxPath( char const * p_rsx_path ) {
 	char * fileNoExtension = NULL;
 	GmRsxType baseType = NONE;
 	GmRsxTextureType textureType = NONE;
-	i32 segmentWidth = 0;
-	i32 segmentHeight = 0;
-	i32 segmentColumns = 0;
-	i32 segmentRows = 0;
-	u32 len = TextLength( p_rsx_path );
+	int32_t segmentWidth = 0;
+	int32_t segmentHeight = 0;
+	int32_t segmentColumns = 0;
+	int32_t segmentRows = 0;
+	uint32_t len = TextLength( p_rsx_path );
 	full = (char *)MemAlloc( len + 1 );
 	memcpy( full, p_rsx_path, (size_t)len + 1 );
 	file = GetFileName( full );
 	extension = GetFileExtension( file );
-	u32 file_len = TextLength( file ) - TextLength( extension );
+	uint32_t file_len = TextLength( file ) - TextLength( extension );
 	fileNoExtension = (char *)MemAlloc( file_len + 1 );
 	memcpy( fileNoExtension, file, file_len );
 
@@ -69,40 +70,40 @@ GmRsxPath gm_createRsxPath( char const * p_rsx_path ) {
 			crs += 5;
 		} else if ( strncmp( crs, ".w", 2 ) == 0 ) {
 			char * end = NULL;
-			i64 w = strtol( ++crs, &end, 10 );
+			int64_t w = strtol( ++crs, &end, 10 );
 			if ( !end || (end && *end != '.' ) )
 				continue;
 
 			*crs = '\0';
 			crs = end;
-			segmentWidth = (i32)w;
+			segmentWidth = (int32_t)w;
 		} else if ( strncmp( crs, ".h", 2 ) == 0 ) {
 			char * end = NULL;
-			i64 h = strtol( ++crs, &end, 10 );
+			int64_t h = strtol( ++crs, &end, 10 );
 			if ( !end || (end && *end != '.' ) )
 				continue;
 
 			*crs = '\0';
 			crs = end;
-			segmentHeight = (i32)h;
+			segmentHeight = (int32_t)h;
 		} else if ( strncmp( crs, ".c", 2 ) == 0 ) {
 			char * end = NULL;
-			i64 c = strtol( ++crs, &end, 10 );
+			int64_t c = strtol( ++crs, &end, 10 );
 			if ( !end || (end && *end != '.' ) )
 				continue;
 
 			*crs = '\0';
 			crs = end;
-			segmentColumns = (i32)c;
+			segmentColumns = (int32_t)c;
 		} else if ( strncmp( crs, ".r", 2 ) == 0 ) {
 			char * end = NULL;
-			i64 r = strtol( ++crs, &end, 10 );
+			int64_t r = strtol( ++crs, &end, 10 );
 			if ( !end || (end && *end != '.' ) )
 				continue;
 
 			*crs = '\0';
 			crs = end;
-			segmentRows = (i32)r;
+			segmentRows = (int32_t)r;
 		}
 		++crs;
 	}
@@ -132,7 +133,7 @@ void gm_destroyRsxPath( GmRsxPath * p_rsx_path ) {
 	*p_rsx_path = (GmRsxPath) { 0 };
 }
 
-i32 gm_loadResource( char const * p_rsx_path ) {
+int32_t gm_loadResource( char const * p_rsx_path ) {
 	if ( !FileExists( p_rsx_path ) )
 		return ERSX_FILENOTFOUND;
 
@@ -140,12 +141,12 @@ i32 gm_loadResource( char const * p_rsx_path ) {
 	if ( !path.full )
 		return ERSX_INVALIDRESOURCEFILE;
 
-	i32 rsx_len;
-	u8 * rsx = LoadFileData( p_rsx_path, &rsx_len );
-	i32 rsx_typ = ~*(i32 *)rsx;
+	int32_t rsx_len;
+	uint8_t * rsx = LoadFileData( p_rsx_path, &rsx_len );
+	int32_t rsx_typ = ~*(int32_t *)rsx;
 	switch( rsx_typ ) {
 	case TEXTURE: {
-		u8 * dat = DecompressData(rsx + 4, rsx_len, &rsx_len );
+		uint8_t * dat = DecompressData(rsx + 4, rsx_len, &rsx_len );
 		Image img = LoadImageFromMemory( ".png", dat, rsx_len );
 		GmRsxTexture txtr;
 		txtr.type = path.attributes.textureType;
@@ -191,7 +192,7 @@ void gm_unloadResource( GmResource p_rsx ) {
 	}
 }
 
-GmResource getResourceById( i32 p_rsx_id ) {
+GmResource getResourceById( int32_t p_rsx_id ) {
 	if ( p_rsx_id < 0 || p_rsx_id > _rsx_cnt - 1 )
 		return (GmResource) { 0 };
 
@@ -199,7 +200,7 @@ GmResource getResourceById( i32 p_rsx_id ) {
 }
 
 GmResource getResourceByName( char const * p_rsx_name ) {
-	for ( i32 i = 0; i < _rsx_cnt; ++i ) {
+	for ( int32_t i = 0; i < _rsx_cnt; ++i ) {
 		if ( strcmp( p_rsx_name, _rsx[i].name ) == 0 )
 			return _rsx[i];
 	}

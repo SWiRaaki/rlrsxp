@@ -9,8 +9,10 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
+#include <bits/stdint-intn.h>
+#include <stdint.h>
+
 #include "raylib.h"
-#include "survivor.h"
 
 #define NONE 0
 
@@ -42,17 +44,17 @@ typedef struct rsx_texture_s {
 
 typedef struct rsx_tiled_texture_s {
 	GmRsxTexture ** 	tiles;
-	i32					tileWidth;
-	i32 				tileHeight;
-	i32 				columns;
-	i32 				rows;
+	int32_t				tileWidth;
+	int32_t				tileHeight;
+	int32_t				columns;
+	int32_t				rows;
 } GmRsxTileMap;
 
 typedef struct rsx_anim_texture_s {
 	GmRsxTexture 	frames;
-	i32 		frameWidth;
-	i32 		frameHeight;
-	i32 		frameCount;
+	int32_t 		frameWidth;
+	int32_t 		frameHeight;
+	int32_t 		frameCount;
 } GmRsxAnimatedTexture;
 
 typedef struct rsx_resource_path_s {
@@ -63,16 +65,16 @@ typedef struct rsx_resource_path_s {
 	struct {
 		GmRsxType 			baseType;
 		GmRsxTextureType 	textureType;
-		i32 				segmentWidth;
-		i32 				segmentHeight;
-		i32 				segmentColumns;
-		i32 				segmentRows;
+		int32_t 			segmentWidth;
+		int32_t 			segmentHeight;
+		int32_t 			segmentColumns;
+		int32_t 			segmentRows;
 	} attributes;
 } GmRsxPath;
 
 typedef struct resource_s {
-	i32 id;
-	i32 type;
+	int32_t id;
+	int32_t	type;
 	char const * name;
 	union {
 		void * 					resource;
@@ -90,12 +92,14 @@ typedef struct resource_s {
 void gm_initResources( void );
 
 /**
- * @brief Update function that is called at the start of the loop
+ * @brief Update function that should be called at the start of the loop
+ * @details Only relevant if the game should be able to hotload resources
  */
 void gm_updateResources( void );
 
 /**
- * @brief Draw function that is called after update is finished
+ * @brief Draw function that should be called after update is finished
+ * @details Only relevant if the game should be able to hotload resources
  */
 void gm_drawResources(  void );
 
@@ -122,7 +126,7 @@ void gm_destroyRsxPath( GmRsxPath * rsx_path );
  * @param rsx_path Path of the file to load
  * @return Resource id if the resource is loaded, error code ( < 0 ) otherwise
  */
-i32 gm_loadResource( char const * rsx_path );
+int32_t gm_loadResource( char const * rsx_path );
 
 /**
  * @brief Releases a loaded resource from memory.
@@ -135,7 +139,7 @@ void gm_unloadResource( GmResource rsx );
  * @param rsx_id Resource id
  * @return Resource handle if found or an empty handle on error
  */
-GmResource getResourceById( i32 rsx_id );
+GmResource getResourceById( int32_t rsx_id );
 
 /**
  * @brief Retrieve the resource handle of a loaded resource with the resource name
